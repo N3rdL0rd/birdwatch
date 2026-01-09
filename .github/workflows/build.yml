@@ -15,9 +15,12 @@ jobs:
         include:
           - name: release channel
             sdk-channel: release
+            sdk-index-url: https://update.flipperzero.one/firmware/directory.json
+            id: official-release
           - name: Unleashed firmware (release channel)
             sdk-index-url: https://up.unleashedflip.com/directory.json
             sdk-channel: release
+            id: unleashed-release
     name: "ufbt: Build for ${{ matrix.name }}"
     steps:
       - name: Checkout
@@ -27,9 +30,10 @@ jobs:
         id: build-app
         with:
           sdk-channel: ${{ matrix.sdk-channel }}
+          sdk-index-url: ${{ matrix.sdk-index-url }}
       - name: Upload app artifacts
         uses: actions/upload-artifact@v4
         with:
           # See ufbt action docs for other output variables
-          name: ${{ github.event.repository.name }}-${{ steps.build-app.outputs.suffix }}
+          name: ${{ github.event.repository.name }}-${{ steps.build-app.outputs.suffix }}-${{ matrix.id }}
           path: ${{ steps.build-app.outputs.fap-artifacts }}
